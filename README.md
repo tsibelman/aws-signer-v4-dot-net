@@ -2,7 +2,7 @@
 Sign HttpRequestMessage using AWS Signature v4 using request information and credentials. 
 
 Example of usage:
-
+```javascript
     var signer = new AWS4RequestSigner("accessKey", "secretKey");
     var request = new HttpRequestMessage {
         Method = HttpMethod.Get,
@@ -15,3 +15,4 @@ Example of usage:
     var response = await client.SendAsync(request);
 
     var responseStr = await response.Content.ReadAsStringAsync();
+```
