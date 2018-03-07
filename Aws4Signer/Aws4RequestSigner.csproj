@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+  <PropertyGroup>    
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors />
     <Company />
-    <Version>0.1.0</Version>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
+    <Version>0.2.0</Version>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <FileVersion>0.2.0.0</FileVersion>
     <PackageLicenseUrl>https://github.com/tsibelman/aws-signer-v4-dot-net/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/tsibelman/aws-signer-v4-dot-net</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
@@ -15,5 +16,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>aws</PackageTags>
   </PropertyGroup>
-
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Threading.Tasks" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
 </Project>
