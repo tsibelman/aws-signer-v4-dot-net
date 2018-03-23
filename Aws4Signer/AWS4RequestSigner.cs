@@ -13,10 +13,11 @@ namespace Aws4RequestSigner
     {
         private readonly string _access_key;
         private readonly string _secret_key;
+        private readonly string _token;
         private readonly SHA256 _sha256;
         private const string algorithm = "AWS4-HMAC-SHA256";
 
-        public AWS4RequestSigner(string accessKey, string secretKey)
+        public AWS4RequestSigner(string accessKey, string secretKey, string token = null)
         {
 
             if (string.IsNullOrEmpty(accessKey))
@@ -31,6 +32,7 @@ namespace Aws4RequestSigner
 
             _access_key = accessKey;
             _secret_key = secretKey;
+            _token = token;
             _sha256 = SHA256.Create();
         }
 
@@ -92,7 +94,7 @@ namespace Aws4RequestSigner
             var t = DateTimeOffset.UtcNow;
             var amzdate = t.ToString("yyyyMMddTHHmmssZ");
             request.Headers.Add("x-amz-date", amzdate);
-            var datestamp=t.ToString("yyyyMMdd");
+            var datestamp = t.ToString("yyyyMMdd");
 
             var canonical_request = new StringBuilder();
             canonical_request.Append(request.Method + "\n");
@@ -120,21 +122,27 @@ namespace Aws4RequestSigner
             canonical_request.Append(signed_headers + "\n");
 
             var content = "";
-            if (request.Content != null) {
+            if (request.Content != null)
+            {
                 content = await request.Content.ReadAsStringAsync();
             }
             var payload_hash = Hash(content);
 
             canonical_request.Append(payload_hash);
-            
+
             var credential_scope = $"{datestamp}/{region}/{service}/aws4_request";
-                       
+
             var string_to_sign = $"{algorithm}\n{amzdate}\n{credential_scope}\n" + Hash(canonical_request.ToString());
 
             var signing_key = GetSignatureKey(_secret_key, datestamp, region, service);
             var signature = ToHexString(HmacSHA256(signing_key, string_to_sign));
-            
+
             request.Headers.TryAddWithoutValidation("Authorization", $"{algorithm} Credential={_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}");
+
+            if (!string.IsNullOrEmpty(_token))
+            {
+                request.Headers.TryAddWithoutValidation("x-amz-security-token", _token);
+            }
 
             return request;
         }
