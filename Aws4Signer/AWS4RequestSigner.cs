@@ -34,9 +34,9 @@ namespace Aws4RequestSigner
             _sha256 = SHA256.Create();
         }
 
-        private string Hash(string stringToHash)
+        private string Hash(byte[] bytesToHash)
         {
-            var result = _sha256.ComputeHash(Encoding.UTF8.GetBytes(stringToHash));
+            var result = _sha256.ComputeHash(bytesToHash);
             return ToHexString(result);
         }
 
@@ -119,9 +119,9 @@ namespace Aws4RequestSigner
 
             canonical_request.Append(signed_headers + "\n");
 
-            var content = "";
+            var content = new byte[0];
             if (request.Content != null) {
-                content = await request.Content.ReadAsStringAsync();
+                content = await request.Content.ReadAsByteArrayAsync();
             }
             var payload_hash = Hash(content);
 
@@ -129,7 +129,7 @@ namespace Aws4RequestSigner
             
             var credential_scope = $"{datestamp}/{region}/{service}/aws4_request";
                        
-            var string_to_sign = $"{algorithm}\n{amzdate}\n{credential_scope}\n" + Hash(canonical_request.ToString());
+            var string_to_sign = $"{algorithm}\n{amzdate}\n{credential_scope}\n" + Hash(Encoding.UTF8.GetBytes(canonical_request.ToString()));
 
             var signing_key = GetSignatureKey(_secret_key, datestamp, region, service);
             var signature = ToHexString(HmacSHA256(signing_key, string_to_sign));
