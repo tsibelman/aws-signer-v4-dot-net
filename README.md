@@ -16,3 +16,7 @@ Example of usage:
 
     var responseStr = await response.Content.ReadAsStringAsync();
 ```
+
+# Nuget Package
+
+[Aws4RequestSigner](https://www.nuget.org/packages/Aws4RequestSigner/) is on NuGet.
