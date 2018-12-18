@@ -143,7 +143,9 @@ namespace Aws4RequestSigner
         {
             var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
             var keys = querystring.AllKeys.OrderBy(a => a).ToArray();
-            var queryParams = keys.Select(key => $"{key}={querystring[key]}");
+
+            // Query params must be escaped in upper case (i.e. "%2C", not "%2c").
+            var queryParams = keys.Select(key => $"{key}={Uri.EscapeDataString(querystring[key])}");
             var canonicalQueryParams = string.Join("&", queryParams);
             return canonicalQueryParams;
         }
