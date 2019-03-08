@@ -96,7 +96,8 @@ namespace Aws4RequestSigner
 
             var canonical_request = new StringBuilder();
             canonical_request.Append(request.Method + "\n");
-            canonical_request.Append(request.RequestUri.AbsolutePath + "\n");
+			canonical_request.Append(string.Join("/", request.RequestUri.AbsolutePath.Split("/")
+				.Select(pathPart => WebUtility.UrlEncode(pathPart))) + "\n");
 
             var canonicalQueryParams = GetCanonicalQueryParams(request);
 
