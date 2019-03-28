@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -96,7 +97,8 @@ namespace Aws4RequestSigner
 
             var canonical_request = new StringBuilder();
             canonical_request.Append(request.Method + "\n");
-            canonical_request.Append(string.Join("/", request.RequestUri.AbsolutePath.Split("/").Select(pathPart => WebUtility.UrlEncode(pathPart))) + "\n");
+           
+            canonical_request.Append(string.Join("/", request.RequestUri.AbsolutePath.Split('/').Select(Uri.EscapeDataString)) + "\n");
 
             var canonicalQueryParams = GetCanonicalQueryParams(request);
 
