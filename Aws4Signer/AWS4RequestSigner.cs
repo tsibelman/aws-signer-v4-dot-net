@@ -106,7 +106,7 @@ namespace Aws4RequestSigner
 
             var signedHeadersList = new List<string>();
 
-            foreach (var header in request.Headers.OrderBy(a => a.Key.ToLowerInvariant()))
+            foreach (var header in request.Headers.OrderBy(a => a.Key.ToLowerInvariant(), StringComparer.OrdinalIgnoreCase))
             {
                 canonical_request.Append(header.Key.ToLowerInvariant());
                 canonical_request.Append(":");
