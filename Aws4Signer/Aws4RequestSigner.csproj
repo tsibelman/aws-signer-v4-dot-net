@@ -6,9 +6,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors />
     <Company />
-    <Version>0.5.0</Version>
-    <AssemblyVersion>0.5.0.0</AssemblyVersion>
-    <FileVersion>0.5.0.0</FileVersion>
+    <Version>0.6.0</Version>
+    <AssemblyVersion>0.6.0.0</AssemblyVersion>
+    <FileVersion>0.6.0.0</FileVersion>
     <PackageLicenseUrl>https://github.com/tsibelman/aws-signer-v4-dot-net/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/tsibelman/aws-signer-v4-dot-net</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
