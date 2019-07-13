@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,7 +14,8 @@ namespace Aws4RequestSigner
         private readonly string _access_key;
         private readonly string _secret_key;
         private readonly SHA256 _sha256;
-        private const string algorithm = "AWS4-HMAC-SHA256";
+        private const string ALGORITHM = "AWS4-HMAC-SHA256";
+        private const string EMPTY_STRING_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
         public AWS4RequestSigner(string accessKey, string secretKey)
         {
@@ -89,7 +89,21 @@ namespace Aws4RequestSigner
             {
                 request.Headers.Host = request.RequestUri.Host;
             }
+            
+            var content = new byte[0];
+            if (request.Content != null) {
+                content = await request.Content.ReadAsByteArrayAsync();
+            }
+            
+            var payload_hash = EMPTY_STRING_HASH;
+            if (content.Length != 0) {
+                request.Content = new ByteArrayContent(content);
+                payload_hash = Hash(content);
+            }
 
+            if (request.Headers.Contains("x-amz-content-sha256") == false)
+                request.Headers.Add("x-amz-content-sha256", payload_hash);
+            
             var t = DateTimeOffset.UtcNow;
             var amzdate = t.ToString("yyyyMMddTHHmmssZ");
             request.Headers.Add("x-amz-date", amzdate);
@@ -120,34 +134,39 @@ namespace Aws4RequestSigner
             var signed_headers = string.Join(";", signedHeadersList);
 
             canonical_request.Append(signed_headers + "\n");
-
-            var content = new byte[0];
-            if (request.Content != null) {
-                content = await request.Content.ReadAsByteArrayAsync();
-            }
-            var payload_hash = Hash(content);
-
             canonical_request.Append(payload_hash);
             
             var credential_scope = $"{datestamp}/{region}/{service}/aws4_request";
                        
-            var string_to_sign = $"{algorithm}\n{amzdate}\n{credential_scope}\n" + Hash(Encoding.UTF8.GetBytes(canonical_request.ToString()));
+            var string_to_sign = $"{ALGORITHM}\n{amzdate}\n{credential_scope}\n" + Hash(Encoding.UTF8.GetBytes(canonical_request.ToString()));
 
             var signing_key = GetSignatureKey(_secret_key, datestamp, region, service);
             var signature = ToHexString(HmacSHA256(signing_key, string_to_sign));
             
-            request.Headers.TryAddWithoutValidation("Authorization", $"{algorithm} Credential={_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"{ALGORITHM} Credential={_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}");
 
             return request;
         }
 
         private static string GetCanonicalQueryParams(HttpRequestMessage request)
         {
-            var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
-            var keys = querystring.AllKeys.OrderBy(a => a).ToArray();
+            SortedDictionary<string,string> values=new SortedDictionary<string, string>();
 
-            // Query params must be escaped in upper case (i.e. "%2C", not "%2c").
-            var queryParams = keys.Select(key => $"{key}={Uri.EscapeDataString(querystring[key])}");
+            var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
+            foreach(string key in querystring.AllKeys)
+            {
+                if (key == null)//Handles keys without values
+                {
+                    values.Add(Uri.EscapeDataString(querystring[key]), $"{Uri.EscapeDataString(querystring[key])}=");
+                }
+                else
+                {
+                    // Query params must be escaped in upper case (i.e. "%2C", not "%2c").
+                    values.Add(Uri.EscapeDataString(key), $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(querystring[key])}");
+                }
+            }
+            
+            var queryParams = values.Select(a => a.Value);
             var canonicalQueryParams = string.Join("&", queryParams);
             return canonicalQueryParams;
         }
