@@ -10,12 +10,12 @@ namespace UnitTestProject
     [TestClass]
     public class SignerUnitTest
     {
-        private readonly string _AccessKey = "AKIAIKFJIWRFEHQSBXPA";
-        private readonly string _secretKey = "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";
-        private readonly string _service = "execute-api";
-        private readonly string _region = "us-east-1";
-        private readonly Uri _requestUri = new Uri("https://5jiocwdop2.execute-api.us-east-1.amazonaws.com/prod/api/direct-subscription");
-        private readonly string _json = "{}";
+        private readonly string _AccessKey = "";
+        private readonly string _secretKey = "";
+        private readonly string _service = "";
+        private readonly string _region = "";
+        private readonly Uri _requestUri = new Uri("");
+        private readonly string _json = "";
         [TestMethod]
         public async Task TestSigner()
         {
