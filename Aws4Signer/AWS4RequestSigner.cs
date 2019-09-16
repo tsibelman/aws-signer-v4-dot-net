@@ -7,17 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Aws4RequestSigner
+namespace AWS4RequestSigner
 {
-    public class Aws4RequestSigner
+    public class AWS4RequestSigner
     {
         private readonly string _accessKey;
         private readonly string _secretKey;
         private readonly SHA256 _sha256;
-        private const string Algorithm = "AWS4-HMAC-SHA256";
-        private const string EmptyStringHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+        private const string ALGORITHM = "AWS4-HMAC-SHA256";
+        private const string EMPTY_STRING_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
-        public Aws4RequestSigner(string accessKey, string secretKey)
+        public AWS4RequestSigner(string accessKey, string secretKey)
         {
 
             if (string.IsNullOrEmpty(accessKey))
@@ -95,7 +95,7 @@ namespace Aws4RequestSigner
                 content = await request.Content.ReadAsByteArrayAsync();
             }
             
-            var payloadHash = EmptyStringHash;
+            var payloadHash = EMPTY_STRING_HASH;
             if (content.Length != 0) {
                 payloadHash = Hash(content);
             }
@@ -137,12 +137,12 @@ namespace Aws4RequestSigner
             
             var credentialScope = $"{dateStamp }/{region}/{service}/aws4_request";
                        
-            var stringToSign = $"{Algorithm}\n{amzDate}\n{credentialScope}\n" + Hash(Encoding.UTF8.GetBytes(canonicalRequest.ToString()));
+            var stringToSign = $"{ALGORITHM}\n{amzDate}\n{credentialScope}\n" + Hash(Encoding.UTF8.GetBytes(canonicalRequest.ToString()));
 
             var signingKey = GetSignatureKey(_secretKey, dateStamp , region, service);
             var signature = ToHexString(HmacSha256(signingKey, stringToSign));
             
-            request.Headers.TryAddWithoutValidation("Authorization", $"{Algorithm} Credential={_accessKey}/{credentialScope}, SignedHeaders={signedHeaders}, Signature={signature}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"{ALGORITHM} Credential={_accessKey}/{credentialScope}, SignedHeaders={signedHeaders}, Signature={signature}");
 
             return request;
         }

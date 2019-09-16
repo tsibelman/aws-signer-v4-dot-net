@@ -2,7 +2,8 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Aws4RequestSigner;
+using AWS4RequestSigner;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTestProject
@@ -10,16 +11,29 @@ namespace UnitTestProject
     [TestClass]
     public class SignerUnitTest
     {
-        private readonly string _AccessKey = "";
-        private readonly string _secretKey = "";
-        private readonly string _service = "";
-        private readonly string _region = "";
-        private readonly Uri _requestUri = new Uri("");
-        private readonly string _json = "";
+        private readonly string _accessKey;
+        private readonly string _secretKey;
+        private readonly string _service;
+        private readonly string _region;
+        private readonly Uri _requestUri;
+        private readonly string _json;
+
+        public SignerUnitTest()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            _accessKey = config["access_key"];
+            _secretKey = config["secret_key"];
+            _service = config["service"];
+            _region = config["region"];
+            _requestUri = new Uri(config["request_uri"]);
+            _json = config["json"];
+        }
         [TestMethod]
         public async Task TestSigner()
         {
-            var signer = new Aws4RequestSigner.Aws4RequestSigner(_AccessKey, _secretKey);
+            var signer = new AWS4RequestSigner.AWS4RequestSigner(_accessKey, _secretKey);
             var content = new StringContent(_json, Encoding.UTF8, "application/json");
             var request = new HttpRequestMessage
             {
