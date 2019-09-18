@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace AWS4RequestSigner
+namespace Aws4RequestSigner
 {
     public class AWS4RequestSigner
     {

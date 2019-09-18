@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors />
     <Company />
-    <Version>0.8.0</Version>
-    <AssemblyVersion>0.8.0.0</AssemblyVersion>
-    <FileVersion>0.8.0.0</FileVersion>
+    <Version>0.9.0</Version>
+    <AssemblyVersion>0.9.0.0</AssemblyVersion>
+    <FileVersion>0.9.0.0</FileVersion>
     <PackageLicenseUrl>https://github.com/tsibelman/aws-signer-v4-dot-net/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/tsibelman/aws-signer-v4-dot-net</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
@@ -15,7 +15,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>aws</PackageTags>
     <LangVersion>7.3</LangVersion>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Aws4RequestSigner.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">

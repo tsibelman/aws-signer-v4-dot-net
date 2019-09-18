@@ -32,7 +32,7 @@ namespace Aws4RequestSignerTest
         [TestMethod]
         public async Task TestSigner()
         {
-            var signer = new AWS4RequestSigner.AWS4RequestSigner(_accessKey, _secretKey);
+            var signer = new Aws4RequestSigner.AWS4RequestSigner(_accessKey, _secretKey);
             var content = new StringContent(_json, Encoding.UTF8, "application/json");
             var request = new HttpRequestMessage
             {
