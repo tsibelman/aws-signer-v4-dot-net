@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aws4RequestSigner", "Aws4Signer\Aws4RequestSigner.csproj", "{517C81D7-93FA-4B7C-A4E5-F290D2C7D520}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aws4RequestSignerTest", "UnitTestProject\Aws4RequestSignerTest.csproj", "{055B4DA2-82EA-4E63-819C-4B8B4C4C68CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{517C81D7-93FA-4B7C-A4E5-F290D2C7D520}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{517C81D7-93FA-4B7C-A4E5-F290D2C7D520}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{517C81D7-93FA-4B7C-A4E5-F290D2C7D520}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055B4DA2-82EA-4E63-819C-4B8B4C4C68CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055B4DA2-82EA-4E63-819C-4B8B4C4C68CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055B4DA2-82EA-4E63-819C-4B8B4C4C68CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055B4DA2-82EA-4E63-819C-4B8B4C4C68CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
