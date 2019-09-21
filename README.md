@@ -30,6 +30,6 @@ To do that just fill the configuration in the appsettings.json file and debug or
   "json": "{...}"
 }
 ```
-# Nuget Package
+# Nuget Package 
 
 [Aws4RequestSigner](https://www.nuget.org/packages/Aws4RequestSigner/) is on NuGet.
