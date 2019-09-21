@@ -18,7 +18,5 @@ jobs:
         dotnet-version: 2.2.108
     - name: Build with dotnet
       run: dotnet build --configuration Release
-    - name: Unit Tests
-      run: dotnet test
     - name: Deploy NuGet Package
       run: dotnet nuget push ./bin/Release/Aws4RequestSigner.*.nupkg -k $ -s https://api.nuget.org/v3/index.json
