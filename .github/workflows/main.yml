@@ -7,9 +7,7 @@ on:
 
 jobs:
   build:
-
-    runs-on: windows-latest
-    
+    runs-on: windows-latest    
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -21,4 +19,4 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Deploy NuGet Package
-      run: dotnet nuget push ./bin/Release/Aws4RequestSigner.*.nupkg -k $ -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./Aws4Signer/bin/Release/Aws4RequestSigner.*.nupkg -k $ -s https://api.nuget.org/v3/index.json
