@@ -68,7 +68,7 @@ namespace Aws4RequestSigner
             return hex.ToString();
         }
 
-        public async Task<HttpRequestMessage> Sign(HttpRequestMessage request, string service, string region)
+        public async Task<HttpRequestMessage> Sign(HttpRequestMessage request, string service, string region, TimeSpan? timeOffset = null)
         {
             if (string.IsNullOrEmpty(service))
             {
@@ -104,6 +104,8 @@ namespace Aws4RequestSigner
                 request.Headers.Add("x-amz-content-sha256", payloadHash);
             
             var t = DateTimeOffset.UtcNow;
+            if (timeOffset.HasValue)
+                t = t.Add(timeOffset.Value);
             var amzDate = t.ToString("yyyyMMddTHHmmssZ");
             request.Headers.Add("x-amz-date", amzDate);
             var dateStamp = t.ToString("yyyyMMdd");
