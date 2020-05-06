@@ -9,7 +9,7 @@ using System.Web;
 
 namespace Aws4RequestSigner
 {
-    public class AWS4RequestSigner
+    public class AWS4RequestSigner:IDisposable
     {
         private readonly string _accessKey;
         private readonly string _secretKey;
@@ -158,7 +158,7 @@ namespace Aws4RequestSigner
             {
                 if (key == null)//Handles keys without values
                 {
-                    values.Add(Uri.EscapeDataString(querystring[key]), new string[] { $"{Uri.EscapeDataString(querystring[key])}=" });
+                    values.Add(Uri.EscapeDataString(querystring[key]), new[] { $"{Uri.EscapeDataString(querystring[key])}=" });
                 }
                 else
                 {
@@ -173,6 +173,11 @@ namespace Aws4RequestSigner
             var queryParams = values.SelectMany(a => a.Value);
             var canonicalQueryParams = string.Join("&", queryParams);
             return canonicalQueryParams;
+        }
+
+        public void Dispose()
+        {
+            _sha256.Dispose();
         }
     }
 }
