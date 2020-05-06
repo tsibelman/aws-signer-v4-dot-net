@@ -149,23 +149,26 @@ namespace Aws4RequestSigner
 
         private static string GetCanonicalQueryParams(HttpRequestMessage request)
         {
-            var values=new SortedDictionary<string, string>();
+            var values = new SortedDictionary<string, IEnumerable<string>>();
 
             var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
-            foreach(var key in querystring.AllKeys)
+            foreach (var key in querystring.AllKeys)
             {
                 if (key == null)//Handles keys without values
                 {
-                    values.Add(Uri.EscapeDataString(querystring[key]), $"{Uri.EscapeDataString(querystring[key])}=");
+                    values.Add(Uri.EscapeDataString(querystring[key]), new string[] { $"{Uri.EscapeDataString(querystring[key])}=" });
                 }
                 else
                 {
                     // Query params must be escaped in upper case (i.e. "%2C", not "%2c").
-                    values.Add(Uri.EscapeDataString(key), $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(querystring[key])}");
+                    // Handles multiple values per query parameter
+                    var queryValues = querystring[key].Split(',').Select(v => $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(v)}");
+
+                    values.Add(Uri.EscapeDataString(key), queryValues);
                 }
             }
-            
-            var queryParams = values.Select(a => a.Value);
+
+            var queryParams = values.SelectMany(a => a.Value);
             var canonicalQueryParams = string.Join("&", queryParams);
             return canonicalQueryParams;
         }
