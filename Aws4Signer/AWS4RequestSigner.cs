@@ -162,9 +162,12 @@ namespace Aws4RequestSigner
                 }
                 else
                 {
-                    // Query params must be escaped in upper case (i.e. "%2C", not "%2c").
                     // Handles multiple values per query parameter
-                    var queryValues = querystring[key].Split(',').Select(v => $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(v)}");
+                    var queryValues = querystring[key].Split(',')
+                        // Order by value alphanumerically (required for correct canonical string)
+                        .OrderBy(v => v)
+                        // Query params must be escaped in upper case (i.e. "%2C", not "%2c").
+                        .Select(v => $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(v)}");
 
                     values.Add(Uri.EscapeDataString(key), queryValues);
                 }
