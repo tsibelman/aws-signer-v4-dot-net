@@ -2,7 +2,7 @@
 Sign HttpRequestMessage using AWS Signature v4 using request information and credentials. 
 
 Example of usage:
-```
+```csharp
     var signer = new AWS4RequestSigner("accessKey", "secretKey");
     var content = new StringContent("{...}", Encoding.UTF8, "application/json");
     var request = new HttpRequestMessage {
@@ -20,7 +20,8 @@ Example of usage:
 ```
 You can also download the source code and use the test project to test the library.
 To do that just fill the configuration in the appsettings.json file and debug or run the test:
-```
+
+```csharp
 {
   "access_key": "...",
   "secret_key": "...",
