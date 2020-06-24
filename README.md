@@ -27,7 +27,7 @@ To do that just fill the configuration in the appsettings.json file and debug or
   "secret_key": "...",
   "service": "execute-api",
   "region": "us-west-2",
-  "request_uri": ""https://apigateway.execute-api.us-west-2.amazonaws.com/Prod/api/data",
+  "request_uri": "https://apigateway.execute-api.us-west-2.amazonaws.com/Prod/api/data",
   "json": "{...}"
 }
 ```
