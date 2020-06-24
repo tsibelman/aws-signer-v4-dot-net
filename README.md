@@ -21,7 +21,7 @@ Example of usage:
 You can also download the source code and use the test project to test the library.
 To do that just fill the configuration in the appsettings.json file and debug or run the test:
 
-```csharp
+```json
 {
   "access_key": "...",
   "secret_key": "...",
