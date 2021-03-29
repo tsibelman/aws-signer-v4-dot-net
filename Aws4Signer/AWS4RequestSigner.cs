@@ -151,7 +151,7 @@ namespace Aws4RequestSigner
 
         private static string GetCanonicalQueryParams(HttpRequestMessage request)
         {
-            var values = new SortedDictionary<string, IEnumerable<string>>(StringComparer.Ordinal);
+            var values = new SortedDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
             var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
             foreach (var key in querystring.AllKeys)
