@@ -156,9 +156,10 @@ namespace Aws4RequestSigner
             var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
             foreach (var key in querystring.AllKeys)
             {
-                if (key == null)//Handles keys without values
+                var escapedKey = Uri.EscapeDataString(key);
+                if (querystring[key] == null)
                 {
-                    values.Add(Uri.EscapeDataString(querystring[key]), new[] { $"{Uri.EscapeDataString(querystring[key])}=" });
+                    values.Add(escapedKey, new[] { $"{escapedKey}=" });
                 }
                 else
                 {
@@ -167,9 +168,9 @@ namespace Aws4RequestSigner
                         // Order by value alphanumerically (required for correct canonical string)
                         .OrderBy(v => v)
                         // Query params must be escaped in upper case (i.e. "%2C", not "%2c").
-                        .Select(v => $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(v)}");
+                        .Select(v => $"{escapedKey}={Uri.EscapeDataString(v)}");
 
-                    values.Add(Uri.EscapeDataString(key), queryValues);
+                    values.Add(escapedKey, queryValues);
                 }
             }
 
