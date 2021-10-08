@@ -31,6 +31,12 @@ To do that just fill the configuration in the appsettings.json file and debug or
   "json": "{...}"
 }
 ```
+# Calling API Gateway with temporary credentials
+When calling API Gateway (i.e. service `execute-api`) with temporary credentials, please also include AWS Session Token in request header:
+```
+request.Headers.TryAddWithoutValidation("X-Amz-Security-Token", "sessionToken");
+```
+
 # Nuget Package 
 
 [Aws4RequestSigner](https://www.nuget.org/packages/Aws4RequestSigner/) is on NuGet.
