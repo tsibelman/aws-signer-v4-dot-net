@@ -68,7 +68,7 @@ namespace Aws4RequestSigner
             return hex.ToString();
         }
 
-        public async Task<HttpRequestMessage> Sign(HttpRequestMessage request, string service, string region, TimeSpan? timeOffset = null)
+        public async Task<HttpRequestMessage> SignAsync(HttpRequestMessage request, string service, string region, TimeSpan? timeOffset = null)
         {
             if (string.IsNullOrEmpty(service))
             {
@@ -149,6 +149,88 @@ namespace Aws4RequestSigner
             return request;
         }
 
+        public HttpRequestMessage Sign(HttpRequestMessage request, string service, string region, TimeSpan? timeOffset = null)
+        {
+            if (string.IsNullOrEmpty(service))
+            {
+                throw new ArgumentOutOfRangeException(nameof(service), service, "Not a valid service.");
+            }
+
+            if (string.IsNullOrEmpty(region))
+            {
+                throw new ArgumentOutOfRangeException(nameof(region), region, "Not a valid region.");
+            }
+
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            if (request.Headers.Host == null)
+            {
+                request.Headers.Host = request.RequestUri.Host;
+            }
+
+            var content = new byte[0];
+            if (request.Content != null)
+            {
+                content = request.Content.ReadAsByteArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+
+            var payloadHash = EMPTY_STRING_HASH;
+            if (content.Length != 0)
+            {
+                payloadHash = Hash(content);
+            }
+
+            if (request.Headers.Contains("x-amz-content-sha256") == false)
+                request.Headers.Add("x-amz-content-sha256", payloadHash);
+
+            var t = DateTimeOffset.UtcNow;
+            if (timeOffset.HasValue)
+                t = t.Add(timeOffset.Value);
+            var amzDate = t.ToString("yyyyMMddTHHmmssZ");
+            request.Headers.Add("x-amz-date", amzDate);
+            var dateStamp = t.ToString("yyyyMMdd");
+
+            var canonicalRequest = new StringBuilder();
+            canonicalRequest.Append(request.Method + "\n");
+
+            canonicalRequest.Append(string.Join("/", request.RequestUri.AbsolutePath.Split('/').Select(Uri.EscapeDataString)) + "\n");
+
+            var canonicalQueryParams = GetCanonicalQueryParams(request);
+
+            canonicalRequest.Append(canonicalQueryParams + "\n");
+
+            var signedHeadersList = new List<string>();
+
+            foreach (var header in request.Headers.OrderBy(a => a.Key.ToLowerInvariant(), StringComparer.OrdinalIgnoreCase))
+            {
+                canonicalRequest.Append(header.Key.ToLowerInvariant());
+                canonicalRequest.Append(":");
+                canonicalRequest.Append(string.Join(",", header.Value.Select(s => s.Trim())));
+                canonicalRequest.Append("\n");
+                signedHeadersList.Add(header.Key.ToLowerInvariant());
+            }
+
+            canonicalRequest.Append("\n");
+
+            var signedHeaders = string.Join(";", signedHeadersList);
+
+            canonicalRequest.Append(signedHeaders + "\n");
+            canonicalRequest.Append(payloadHash);
+
+            var credentialScope = $"{dateStamp }/{region}/{service}/aws4_request";
+
+            var stringToSign = $"{ALGORITHM}\n{amzDate}\n{credentialScope}\n" + Hash(Encoding.UTF8.GetBytes(canonicalRequest.ToString()));
+
+            var signingKey = GetSignatureKey(_secretKey, dateStamp, region, service);
+            var signature = ToHexString(HmacSha256(signingKey, stringToSign));
+
+            request.Headers.TryAddWithoutValidation("Authorization", $"{ALGORITHM} Credential={_accessKey}/{credentialScope}, SignedHeaders={signedHeaders}, Signature={signature}");
+
+            return request;
+        }
         private static string GetCanonicalQueryParams(HttpRequestMessage request)
         {
             var values = new SortedDictionary<string, IEnumerable<string>>(StringComparer.Ordinal);

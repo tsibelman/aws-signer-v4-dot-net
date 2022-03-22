@@ -30,7 +30,7 @@ namespace Aws4RequestSignerTest
             _json = config["json"];
         }
         [TestMethod]
-        public async Task TestSigner()
+        public async Task TestSignerAsync()
         {
             var signer = new Aws4RequestSigner.AWS4RequestSigner(_accessKey, _secretKey);
             var content = new StringContent(_json, Encoding.UTF8, "application/json");
@@ -41,10 +41,28 @@ namespace Aws4RequestSignerTest
                 Content = content
             };
 
-            request = await signer.Sign(request, _service, _region);
+            request = await signer.SignAsync(request, _service, _region);
 
             var client = new HttpClient();
             var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+        }
+        [TestMethod]
+        public void TestSigner()
+        {
+            var signer = new Aws4RequestSigner.AWS4RequestSigner(_accessKey, _secretKey);
+            var content = new StringContent(_json, Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = _requestUri,
+                Content = content
+            };
+
+            request = signer.Sign(request, _service, _region);
+
+            var client = new HttpClient();
+            var response = client.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
         }
     }
