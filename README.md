@@ -18,7 +18,7 @@ Example of usage:
     // or response = client.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
 
     var responseStr = await response.Content.ReadAsStringAsync();
-    // // or responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
+    // // or responseStr = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
 ```
 You can also download the source code and use the test project to test the library.
 To do that just fill the configuration in the appsettings.json file and debug or run the test:
