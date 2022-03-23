@@ -9,7 +9,7 @@ using System.Web;
 
 namespace Aws4RequestSigner
 {
-    public class AWS4RequestSigner:IDisposable
+    public class AWS4RequestSigner : IDisposable
     {
         private readonly string _accessKey;
         private readonly string _secretKey;
@@ -89,20 +89,22 @@ namespace Aws4RequestSigner
             {
                 request.Headers.Host = request.RequestUri.Host;
             }
-            
+
             var content = new byte[0];
-            if (request.Content != null) {
-                content = await request.Content.ReadAsByteArrayAsync();
+            if (request.Content != null)
+            {
+                content = await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             }
-            
+
             var payloadHash = EMPTY_STRING_HASH;
-            if (content.Length != 0) {
+            if (content.Length != 0)
+            {
                 payloadHash = Hash(content);
             }
 
             if (request.Headers.Contains("x-amz-content-sha256") == false)
                 request.Headers.Add("x-amz-content-sha256", payloadHash);
-            
+
             var t = DateTimeOffset.UtcNow;
             if (timeOffset.HasValue)
                 t = t.Add(timeOffset.Value);
@@ -112,7 +114,7 @@ namespace Aws4RequestSigner
 
             var canonicalRequest = new StringBuilder();
             canonicalRequest.Append(request.Method + "\n");
-           
+
             canonicalRequest.Append(string.Join("/", request.RequestUri.AbsolutePath.Split('/').Select(Uri.EscapeDataString)) + "\n");
 
             var canonicalQueryParams = GetCanonicalQueryParams(request);
@@ -136,14 +138,14 @@ namespace Aws4RequestSigner
 
             canonicalRequest.Append(signedHeaders + "\n");
             canonicalRequest.Append(payloadHash);
-            
+
             var credentialScope = $"{dateStamp }/{region}/{service}/aws4_request";
-                       
+
             var stringToSign = $"{ALGORITHM}\n{amzDate}\n{credentialScope}\n" + Hash(Encoding.UTF8.GetBytes(canonicalRequest.ToString()));
 
-            var signingKey = GetSignatureKey(_secretKey, dateStamp , region, service);
+            var signingKey = GetSignatureKey(_secretKey, dateStamp, region, service);
             var signature = ToHexString(HmacSha256(signingKey, stringToSign));
-            
+
             request.Headers.TryAddWithoutValidation("Authorization", $"{ALGORITHM} Credential={_accessKey}/{credentialScope}, SignedHeaders={signedHeaders}, Signature={signature}");
 
             return request;
