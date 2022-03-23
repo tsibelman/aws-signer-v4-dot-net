@@ -12,11 +12,13 @@ Example of usage:
     };
 
     request = await signer.Sign(request, "execute-api", "us-west-2");
-    // or signer.Sign(request, "execute-api", "us-west-2").ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
+    // or request = signer.Sign(request, "execute-api", "us-west-2").ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
     var client = new HttpClient();
     var response = await client.SendAsync(request);
+    // or response = client.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
 
     var responseStr = await response.Content.ReadAsStringAsync();
+    // // or responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
 ```
 You can also download the source code and use the test project to test the library.
 To do that just fill the configuration in the appsettings.json file and debug or run the test:
