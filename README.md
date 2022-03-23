@@ -12,7 +12,7 @@ Example of usage:
     };
 
     request = await signer.Sign(request, "execute-api", "us-west-2");
-
+    // or signer.Sign(request, "execute-api", "us-west-2").ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
     var client = new HttpClient();
     var response = await client.SendAsync(request);
 
