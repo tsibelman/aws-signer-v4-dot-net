@@ -12,13 +12,10 @@ Example of usage:
     };
 
     request = await signer.Sign(request, "execute-api", "us-west-2");
-    // or request = signer.Sign(request, "execute-api", "us-west-2").ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
     var client = new HttpClient();
     var response = await client.SendAsync(request);
-    // or response = client.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
 
     var responseStr = await response.Content.ReadAsStringAsync();
-    // // or responseStr = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult(); if you can't call it from an async function
 ```
 You can also download the source code and use the test project to test the library.
 To do that just fill the configuration in the appsettings.json file and debug or run the test:
@@ -32,6 +29,24 @@ To do that just fill the configuration in the appsettings.json file and debug or
   "request_uri": "https://apigateway.execute-api.us-west-2.amazonaws.com/Prod/api/data",
   "json": "{...}"
 }
+```
+# Calling from a sync method
+In case you can't use async calls in your method, you can use this example instead
+```csharp
+    var signer = new AWS4RequestSigner("accessKey", "secretKey");
+    var content = new StringContent("{...}", Encoding.UTF8, "application/json");
+    var request = new HttpRequestMessage {
+        Method = HttpMethod.Get,
+        RequestUri = new Uri("https://apigateway.execute-api.us-west-2.amazonaws.com/Prod/api/data"),
+        Content = content
+    };
+
+    request = signer.Sign(request, "execute-api", "us-west-2").ConfigureAwait(false).GetAwaiter().GetResult();
+;
+    var client = new HttpClient();
+    var response = client.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
+
+    var responseStr = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 ```
 # Nuget Package 
 
