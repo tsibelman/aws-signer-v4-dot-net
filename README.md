@@ -49,4 +49,4 @@ In case you can't use async calls in your method, you can use this example inste
 ```
 ### Nuget Package 
 
-[Aws4RequestSigner](https://www.nuget.org/packages/Aws4RequestSigner/) is on NuGet.
+ Aws4RequestSigner is on NuGet: [Aws4RequestSigner](https://www.nuget.org/packages/Aws4RequestSigner/)
