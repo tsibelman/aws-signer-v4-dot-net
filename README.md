@@ -30,7 +30,7 @@ To do that just fill the configuration in the appsettings.json file and debug or
   "json": "{...}"
 }
 ```
-# Calling from a sync method
+### Calling from a sync method
 In case you can't use async calls in your method, you can use this example instead
 ```csharp
     var signer = new AWS4RequestSigner("accessKey", "secretKey");
@@ -47,6 +47,6 @@ In case you can't use async calls in your method, you can use this example inste
 
     var responseStr = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 ```
-# Nuget Package 
+### Nuget Package 
 
 [Aws4RequestSigner](https://www.nuget.org/packages/Aws4RequestSigner/) is on NuGet.
