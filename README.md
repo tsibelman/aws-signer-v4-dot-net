@@ -42,7 +42,6 @@ In case you can't use async calls in your method, you can use this example inste
     };
 
     request = signer.Sign(request, "execute-api", "us-west-2").ConfigureAwait(false).GetAwaiter().GetResult();
-;
     var client = new HttpClient();
     var response = client.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
 
