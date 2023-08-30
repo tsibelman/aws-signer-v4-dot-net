@@ -30,6 +30,13 @@ To do that just fill the configuration in the appsettings.json file and debug or
   "json": "{...}"
 }
 ```
+
+# Calling API Gateway with temporary credentials
+When calling API Gateway (i.e. service `execute-api`) with temporary credentials, please also include AWS Session Token in request header:
+```
+request.Headers.TryAddWithoutValidation("X-Amz-Security-Token", "sessionToken");
+```
+
 ### Calling from a sync method
 In case you can't use async calls in your method, you can use this example instead
 ```csharp
@@ -47,6 +54,7 @@ In case you can't use async calls in your method, you can use this example inste
 
     var responseStr = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 ```
-### Nuget Package 
 
+
+### Nuget Package 
  Aws4RequestSigner is on NuGet: [Aws4RequestSigner](https://www.nuget.org/packages/Aws4RequestSigner/)
